@@ -1,0 +1,5 @@
+{
+  "name": "FeatherFind AI",
+  "description": "An AI-powered web application that allows users to identify bird species from photos, get detailed information, and chat with a bird expert AI. It leverages Gemini for image analysis, complex data retrieval with thinking mode, and real-time information using Google Maps grounding.",
+  "requestFramePermissions": []
+}
