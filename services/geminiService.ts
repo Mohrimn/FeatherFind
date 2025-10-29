@@ -1,6 +1,6 @@
 
-import { GoogleGenAI, Type, Chat, GenerateContentResponse } from "@google/genai";
-import { BirdInfo, ChatMessage, RangeInfo } from '../types';
+import { GoogleGenAI, Type, Chat } from "@google/genai";
+import { BirdInfo, BirdsongResult, ChatMessage, RangeInfo } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -17,6 +17,17 @@ const fileToGenerativePart = async (file: File) => {
   });
   return {
     inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+  };
+};
+
+const audioFileToGenerativePart = async (file: Blob) => {
+  const base64EncodedDataPromise = new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+    reader.readAsDataURL(file);
+  });
+  return {
+    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type || 'audio/webm' },
   };
 };
 
@@ -38,6 +49,49 @@ export const identifyBirdFromImage = async (imageFile: File): Promise<string> =>
   }
   return text;
 };
+
+export const identifyBirdFromSound = async (audioBlob: Blob): Promise<BirdsongResult[]> => {
+    const audioPart = await audioFileToGenerativePart(audioBlob);
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: {
+            parts: [
+                audioPart,
+                { text: "Analyze this audio recording of a birdsong. Identify up to 3 possible bird species. For each species, provide its common name, scientific name, a confidence level (High, Medium, or Low), and brief notes on the vocalization patterns heard (e.g., 'fast-paced trill', 'melodic whistles')." }
+            ],
+        },
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    predictions: {
+                        type: Type.ARRAY,
+                        items: {
+                            type: Type.OBJECT,
+                            properties: {
+                                commonName: { type: Type.STRING },
+                                scientificName: { type: Type.STRING },
+                                confidence: { type: Type.STRING, enum: ["High", "Medium", "Low"] },
+                                vocalizationNotes: { type: Type.STRING }
+                            },
+                            required: ["commonName", "scientificName", "confidence", "vocalizationNotes"]
+                        }
+                    }
+                },
+                 required: ["predictions"]
+            }
+        }
+    });
+
+    const parsed = JSON.parse(response.text);
+    if (!parsed.predictions || parsed.predictions.length === 0) {
+      throw new Error("Could not identify any bird species from the audio.");
+    }
+    return parsed.predictions;
+};
+
 
 export const getBirdDetails = async (birdName: string): Promise<BirdInfo> => {
     const commonName = birdName.split('|')[0].trim();
@@ -119,10 +173,6 @@ export const streamChatMessage = async (
     startChat();
   }
   
-  // To keep context, we can send previous messages. But for simplicity and to avoid large payloads, we'll just send the last few.
-  // The official 'chat' object from the SDK handles history automatically. We are just re-creating it here for context if needed.
-  // Let's use the SDK's stateful chat object.
-
   if (!chatInstance) throw new Error("Chat not initialized");
   
   const result = await chatInstance.sendMessageStream({ message });

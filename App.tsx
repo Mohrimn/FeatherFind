@@ -3,6 +3,7 @@ import { BirdIdentifier } from './components/BirdIdentifier';
 import { BirdChat } from './components/BirdChat';
 import { Header } from './components/Header';
 import { View } from './types';
+import { BirdsongIdentifier } from './components/BirdsongIdentifier';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('identifier');
@@ -13,6 +14,7 @@ const App: React.FC = () => {
       <main className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
         {view === 'identifier' && <BirdIdentifier />}
         {view === 'chat' && <BirdChat />}
+        {view === 'birdsong' && <BirdsongIdentifier />}
       </main>
       <footer className="text-center p-4 text-xs text-gray-500 dark:text-gray-400">
         <p>&copy; {new Date().getFullYear()} FeatherFind AI. All rights reserved.</p>

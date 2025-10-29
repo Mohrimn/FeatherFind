@@ -1,9 +1,9 @@
 
-export type View = 'identifier' | 'chat';
+export type View = 'identifier' | 'chat' | 'birdsong';
 
 export interface BirdInfo {
   commonName: string;
-  scientificName: string;
+  scientificName:string;
   description: string;
   habitat: string;
   diet: string;
@@ -27,4 +27,25 @@ export interface IdentificationResult {
 export interface ChatMessage {
   role: 'user' | 'model';
   parts: { text: string }[];
+}
+
+export interface BirdsongResult {
+  commonName: string;
+  scientificName: string;
+  confidence: 'High' | 'Medium' | 'Low' | string;
+  vocalizationNotes: string;
+}
+
+export interface QuizQuestion {
+  id: number;
+  audioSrc: string;
+  options: string[];
+  correctAnswer: string;
+}
+
+export interface QuizStats {
+  score: number;
+  streak: number;
+  questionsAnswered: number;
+  correctAnswers: number;
 }

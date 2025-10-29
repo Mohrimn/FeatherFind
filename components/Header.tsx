@@ -3,6 +3,7 @@ import { View } from '../types';
 import { LeafIcon } from './icons/LeafIcon';
 import { CameraIcon } from './icons/CameraIcon';
 import { ChatIcon } from './icons/ChatIcon';
+import { MicrophoneIcon } from './icons/MicrophoneIcon';
 
 interface HeaderProps {
   currentView: View;
@@ -31,6 +32,10 @@ export const Header: React.FC<HeaderProps> = ({ currentView, setView }) => {
             <button onClick={() => setView('identifier')} className={navButtonClasses('identifier')}>
               <CameraIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Identifier</span>
+            </button>
+            <button onClick={() => setView('birdsong')} className={navButtonClasses('birdsong')}>
+              <MicrophoneIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Birdsong ID</span>
             </button>
             <button onClick={() => setView('chat')} className={navButtonClasses('chat')}>
               <ChatIcon className="h-5 w-5" />
