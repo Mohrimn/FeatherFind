@@ -1,10 +1,7 @@
-
 import { GoogleGenAI, Type, Chat } from "@google/genai";
 import { BirdInfo, BirdsongResult, ChatMessage, RangeInfo } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
+export const isApiKeyConfigured = () => !!process.env.API_KEY;
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 let chatInstance: Chat | null = null;
