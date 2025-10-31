@@ -1,10 +1,24 @@
 import { GoogleGenAI, Type, Chat } from "@google/genai";
 import { BirdInfo, BirdsongResult, ChatMessage, RangeInfo } from '../types';
 
-export const isApiKeyConfigured = () => !!process.env.API_KEY;
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let ai: GoogleGenAI | null = null;
 let chatInstance: Chat | null = null;
+
+export const isApiKeyConfigured = () => !!process.env.API_KEY || !!sessionStorage.getItem('gemini_api_key');
+
+export const initializeAi = (apiKey: string) => {
+    if (apiKey) {
+        ai = new GoogleGenAI({ apiKey });
+        chatInstance = null; // Reset chat instance when AI is re-initialized
+    }
+};
+
+const getAi = () => {
+    if (!ai) {
+        throw new Error("Gemini AI service not initialized. Please configure the API key.");
+    }
+    return ai;
+}
 
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
@@ -30,7 +44,7 @@ const audioFileToGenerativePart = async (file: Blob) => {
 
 export const identifyBirdFromImage = async (imageFile: File): Promise<string> => {
   const imagePart = await fileToGenerativePart(imageFile);
-  const response = await ai.models.generateContent({
+  const response = await getAi().models.generateContent({
     model: 'gemini-2.5-flash',
     contents: {
         parts: [
@@ -50,7 +64,7 @@ export const identifyBirdFromImage = async (imageFile: File): Promise<string> =>
 export const identifyBirdFromSound = async (audioBlob: Blob): Promise<BirdsongResult[]> => {
     const audioPart = await audioFileToGenerativePart(audioBlob);
 
-    const response = await ai.models.generateContent({
+    const response = await getAi().models.generateContent({
         model: 'gemini-2.5-flash',
         contents: {
             parts: [
@@ -94,7 +108,7 @@ export const getBirdDetails = async (birdName: string): Promise<BirdInfo> => {
     const commonName = birdName.split('|')[0].trim();
     const scientificName = birdName.split('|')[1].trim();
 
-    const response = await ai.models.generateContent({
+    const response = await getAi().models.generateContent({
         model: 'gemini-2.5-pro',
         contents: `Provide a detailed profile for the bird: ${commonName} (${scientificName}).`,
         config: {
@@ -126,7 +140,7 @@ export const getBirdDetails = async (birdName: string): Promise<BirdInfo> => {
 export const getBirdRange = async (birdName: string): Promise<RangeInfo> => {
     const commonName = birdName.split('|')[0].trim();
     
-    const response = await ai.models.generateContent({
+    const response = await getAi().models.generateContent({
         model: "gemini-2.5-flash",
         contents: `What is the geographic range of the ${commonName}? Describe its habitat range and migratory patterns.`,
         config: {
@@ -153,7 +167,7 @@ export const getBirdRange = async (birdName: string): Promise<RangeInfo> => {
 };
 
 export const startChat = () => {
-  chatInstance = ai.chats.create({
+  chatInstance = getAi().chats.create({
     model: 'gemini-2.5-flash',
     config: {
         systemInstruction: 'You are a friendly and knowledgeable ornithologist (a bird expert). Answer questions about birds with enthusiasm and detail. Keep your answers concise and engaging for a general audience.',

@@ -25,12 +25,14 @@ export const BirdsongIdentifier: React.FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const waveformCanvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
+  // FIX: Initialize useRef with null to provide an initial value, which is required for typed refs.
+  const animationFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const countdownIntervalRef = useRef<number>();
+  // FIX: Initialize useRef with null to provide an initial value, which is required for typed refs.
+  const countdownIntervalRef = useRef<number | null>(null);
 
   // Learning Mode State
   const [stats, setStats] = useState<QuizStats>({ score: 0, streak: 0, questionsAnswered: 0, correctAnswers: 0 });
