@@ -74,7 +74,7 @@ const App: React.FC = () => {
         {view === 'birdsong' && <BirdsongIdentifier />}
       </main>
       <footer className="text-center p-4 text-xs text-gray-500 dark:text-gray-400">
-        <p>&copy; {new Date().getFullYear()} FeatherFind AI. All rights reserved.</p>
+        <p>Made by <a href="https://github.com/Mohrimn" target="_blank" rel="noopener noreferrer" className="hover:text-green-500">Mohrimn</a></p>
       </footer>
     </div>
   );
