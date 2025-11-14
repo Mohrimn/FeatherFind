@@ -39,3 +39,39 @@ This application is designed to run in an environment where the Google Gemini AP
     ```
 
 2.  **Launching the App**: No complex build process is needed. Simply open the `index.html` file in your web browser. The necessary scripts are loaded via an import map from a CDN, and the app will be ready to use immediately.
+
+---
+
+## Running on Android (with Capacitor)
+
+You can run this web application as a native Android app using Capacitor. This allows you to build an `.apk` or `.aab` file for testing or publishing to the Google Play Store.
+
+### Prerequisites for Android
+
+-   **Node.js and npm**: Install from the [official Node.js website](https://nodejs.org/).
+-   **Android Studio**: Install the [latest version of Android Studio](https://developer.android.com/studio) to manage the Android project, SDKs, and emulators.
+
+### Setup and Running on Android
+
+1.  **Install Dependencies**: Open your terminal in the project root and install the necessary packages.
+    ```bash
+    npm install
+    ```
+
+2.  **Add the Android Platform**: This command creates the native `android` project folder.
+    ```bash
+    npx cap add android
+    ```
+
+3.  **Build and Sync Web Assets**: This command runs our build script (which copies web files into the `/dist` folder) and then syncs those files with the Android project. You should run this command every time you make changes to the web code.
+    ```bash
+    npm run android:sync
+    ```
+    *Note: The build script in `package.json` is basic and designed for Unix-like systems (`macOS`, `Linux`). For Windows, you may need to use a tool like `ncp` or `copyfiles` and adjust the script.*
+
+4.  **Open in Android Studio**: This command opens the native project in Android Studio.
+    ```bash
+    npm run android:open
+    ```
+
+5.  **Run the App**: Once Android Studio is open, it will build the project. You can then run the app on a connected physical device or a virtual device (emulator) by clicking the "Run" button (▶️).

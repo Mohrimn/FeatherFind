@@ -4,6 +4,7 @@ import { BirdChat } from './components/BirdChat';
 import { Header } from './components/Header';
 import { View } from './types';
 import { BirdsongIdentifier } from './components/BirdsongIdentifier';
+import { BirdsongQuiz } from './components/BirdsongQuiz';
 import { isApiKeyConfigured, initializeAi } from './services/geminiService';
 import { LeafIcon } from './components/icons/LeafIcon';
 
@@ -72,9 +73,10 @@ const App: React.FC = () => {
         {view === 'identifier' && <BirdIdentifier />}
         {view === 'chat' && <BirdChat />}
         {view === 'birdsong' && <BirdsongIdentifier />}
+        {view === 'quiz' && <BirdsongQuiz />}
       </main>
       <footer className="text-center p-4 text-xs text-gray-500 dark:text-gray-400">
-        <p>Made by <a href="https://github.com/Mohrimn" target="_blank" rel="noopener noreferrer" className="hover:text-green-500">Mohrimn</a></p>
+        <p>&copy; {new Date().getFullYear()} FeatherFind AI. All rights reserved.</p>
       </footer>
     </div>
   );

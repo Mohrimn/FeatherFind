@@ -1,5 +1,4 @@
-
-export type View = 'identifier' | 'chat' | 'birdsong';
+export type View = 'identifier' | 'chat' | 'birdsong' | 'quiz';
 
 export interface BirdInfo {
   commonName: string;
